@@ -3,7 +3,7 @@ import torch
 from torch_geometric.datasets import QM9
 from torch_geometric.loader import DataLoader
 
-from models.gcn import MolecularGCN
+from models.gin import MolecularGIN
 
 
 # ==========================
@@ -25,7 +25,7 @@ loader = DataLoader(
 # LOAD MODEL
 # ==========================
 
-model = MolecularGCN()
+model = MolecularGIN()
 
 model.load_state_dict(
     torch.load(

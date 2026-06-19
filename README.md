@@ -35,6 +35,18 @@ Predicting molecular dipole moment (μ) from molecular graphs.
 | ----- | ------------- | ------ |
 | GCN   | Dipole Moment | 1.0857 |
 
+## Experimental Results
+
+| Model | Dataset Size | Epochs | MAE |
+|---------|---------|---------|---------|
+| GCN | 5000 | 10 | 1.0857 |
+| GCN | 5000 | 50 | 0.9574 |
+| GIN | 5000 | 50 | 0.7952 |
+
+### Observation
+
+GIN outperformed GCN on molecular property prediction, achieving a ~17% reduction in MAE under identical training conditions.
+
 ## Project Structure
 
 ```text

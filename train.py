@@ -6,7 +6,7 @@ from torch_geometric.datasets import QM9
 from torch_geometric.loader import DataLoader
 from torch.utils.data import random_split
 
-from models.gcn import MolecularGCN
+from models.gin import MolecularGIN
 
 
 # ==========================
@@ -50,7 +50,7 @@ val_loader = DataLoader(
 # MODEL
 # ==========================
 
-model = MolecularGCN()
+model = MolecularGIN()
 
 optimizer = Adam(
     model.parameters(),

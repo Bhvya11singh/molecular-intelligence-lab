@@ -1,1 +1,4 @@
-Model,DatasetSize,Epochs,TrainLoss,ValLoss,MAE
+Model,DatasetSize,Epochs,MAE
+GCN,5000,10,1.0857
+GCN,5000,50,0.9574
+GIN,5000,50,0.7952
