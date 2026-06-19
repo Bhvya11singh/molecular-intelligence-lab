@@ -1,14 +1,25 @@
 # Molecular Intelligence Lab
 
-Graph Neural Networks and Scientific Machine Learning for Molecular Property Prediction
+Graph Neural Networks, Scientific Machine Learning, and Molecular AI for Quantum Chemistry
 
 ## Overview
 
-Molecular properties govern the behavior of chemical systems, influencing reactivity, stability, spectroscopy, and thermodynamics. Traditional quantum chemistry methods such as Density Functional Theory (DFT) provide accurate predictions but are computationally expensive for large-scale molecular discovery.
+Molecular Intelligence Lab is a research-oriented project exploring the intersection of:
 
-This project investigates the use of Graph Neural Networks (GNNs) as surrogate models for quantum chemical property prediction using the QM9 benchmark dataset. Molecules are represented as graphs where atoms are nodes and chemical bonds are edges, allowing neural networks to learn structure-property relationships directly from molecular topology.
+* Mathematics
+* Chemistry
+* Artificial Intelligence
+* Scientific Machine Learning
+* Computational Chemistry
 
-The long-term goal of this project is to explore Scientific Machine Learning approaches that combine machine learning, chemistry, mathematics, and physical constraints for molecular modeling.
+The project investigates how Graph Neural Networks (GNNs) can learn molecular representations directly from molecular graph structures and predict quantum chemical properties.
+
+Molecules are represented as graphs where:
+
+* Nodes represent atoms
+* Edges represent chemical bonds
+
+The long-term objective is to build physically informed machine learning models that combine data-driven learning with scientific and chemical knowledge for molecular modeling and discovery.
 
 ---
 
@@ -16,86 +27,108 @@ The long-term goal of this project is to explore Scientific Machine Learning app
 
 ### QM9 Quantum Chemistry Dataset
 
-* 130,831 organic molecules
-* Up to 9 heavy atoms (C, N, O, F)
-* Quantum chemical properties computed using Density Functional Theory (DFT)
-* Widely used benchmark for molecular machine learning research
+* 130,000+ small organic molecules
+* Computed using Density Functional Theory (DFT)
+* 19 quantum chemical target properties
+* Standard benchmark dataset for molecular machine learning
 
-### Target Properties
-
-The multitask model predicts 19 molecular properties simultaneously, including:
+Properties include:
 
 * Dipole Moment (μ)
 * Polarizability (α)
 * HOMO Energy
 * LUMO Energy
 * HOMO-LUMO Gap
-* Zero Point Vibrational Energy
-* Thermodynamic Energies
+* Internal Energy
 * Heat Capacity
 * Rotational Constants
+* And additional quantum chemical descriptors
 
 ---
 
-## Models Implemented
+## Research Objectives
 
-### Graph Convolutional Network (GCN)
+### Phase 1
 
-Baseline graph neural network using message passing and graph-level pooling.
+Single-property molecular prediction using Graph Convolutional Networks (GCN).
 
-### Graph Isomorphism Network (GIN)
+### Phase 2
 
-More expressive graph architecture designed to better capture molecular structural information.
+Improved molecular representation learning using Graph Isomorphism Networks (GIN).
 
-### Multi-Task GIN
+### Phase 3
 
-Extended GIN model for simultaneous prediction of 19 molecular properties.
+Multi-task molecular learning for simultaneous prediction of 19 quantum chemical properties.
 
-### Multi-Task GIN with Dropout
+### Phase 4 (Ongoing)
 
-Regularized multitask architecture trained on larger datasets to improve generalization.
+Scientific Machine Learning and geometry-aware molecular neural networks using molecular 3D coordinates.
+
+---
+
+## Technologies
+
+* Python
+* PyTorch
+* PyTorch Geometric
+* Graph Neural Networks
+* Scientific Machine Learning
+* Computational Chemistry
+* Quantum Chemistry Datasets
+* Data Analysis & Visualization
 
 ---
 
 ## Experimental Results
 
-### Single-Property Prediction
+### Single Property Prediction
 
-| Model | Dataset Size | Property      | MAE    |
-| ----- | ------------ | ------------- | ------ |
-| GCN   | 5,000        | Dipole Moment | 1.0857 |
-| GCN   | 5,000        | Dipole Moment | 0.9574 |
-| GIN   | 5,000        | Dipole Moment | 0.7952 |
+| Model | Dataset Size | Epochs | Target        | Performance  |
+| ----- | ------------ | ------ | ------------- | ------------ |
+| GCN   | 5,000        | 10     | Dipole Moment | MAE = 1.0857 |
+| GCN   | 5,000        | 50     | Dipole Moment | MAE = 0.9574 |
+| GIN   | 5,000        | 50     | Dipole Moment | MAE = 0.7952 |
 
-### Multi-Task Prediction
+### Multi-Task Molecular Property Prediction
 
-| Model                    | Dataset Size | Targets | Validation Loss |
-| ------------------------ | ------------ | ------- | --------------- |
-| Multi-Task GIN           | 5,000        | 19      | 6.5868          |
-| Multi-Task GIN + Dropout | 20,000       | 19      | Ongoing         |
+| Model                                       | Dataset Size | Targets       | Performance              |
+| ------------------------------------------- | ------------ | ------------- | ------------------------ |
+| Multi-Task GIN                              | 5,000        | 19 Properties | Validation Loss = 6.5868 |
+| Multi-Task GIN (3 Layers, 128 Hidden Units) | 20,000       | 19 Properties | Validation Loss ≈ 0.34   |
 
-### Property-Wise Evaluation
+### Property-wise Results (20,000 Molecules)
 
-Representative results from the multitask model:
-
-| Property                      | MAE  |
-| ----------------------------- | ---- |
-| Dipole Moment (μ)             | 1.10 |
-| Polarizability (α)            | 7.85 |
-| HOMO Energy                   | 0.56 |
-| LUMO Energy                   | 0.66 |
-| HOMO-LUMO Gap                 | 0.55 |
-| Zero Point Vibrational Energy | 0.52 |
+| Property  | MAE     |
+| --------- | ------- |
+| mu        | 0.906   |
+| alpha     | 2.917   |
+| homo      | 0.502   |
+| lumo      | 0.472   |
+| gap       | 0.525   |
+| r2        | 91.170  |
+| zpve      | 0.217   |
+| u0        | 338.871 |
+| u298      | 339.279 |
+| h298      | 339.407 |
+| g298      | 338.983 |
+| cv        | 2.140   |
+| u0_atom   | 2.868   |
+| u298_atom | 2.881   |
+| h298_atom | 2.892   |
+| g298_atom | 2.705   |
+| a         | 194.512 |
+| b         | 0.337   |
+| c         | 0.224   |
 
 ---
 
 ## Key Findings
 
-* GIN consistently outperformed GCN on molecular property prediction.
+* GIN consistently outperformed GCN for molecular property prediction.
+* Increasing model depth and hidden dimensions significantly improved performance.
 * Multi-task learning enabled simultaneous prediction of 19 quantum chemical properties.
-* Target normalization significantly improved optimization stability.
-* Increasing dataset size from 5k to 20k molecules substantially improved validation performance.
-* Electronic properties such as HOMO, LUMO, and energy gap were predicted more accurately than large thermodynamic energy quantities.
+* Scaling from 5,000 to 20,000 molecules substantially improved model generalization.
+* Architecture improvements produced larger gains than simple regularization techniques.
 
 ---
 
@@ -107,13 +140,16 @@ molecular-intelligence-lab/
 ├── data/
 ├── models/
 │   ├── gcn.py
-│   ├── gin.py
-│
-├── results/
-│   ├── multitask_metrics.csv
-│   ├── experiment_summary.csv
+│   └── gin.py
 │
 ├── notebooks/
+│
+├── results/
+│   ├── training_curve.png
+│   ├── experiment_summary.csv
+│   ├── multitask_metrics.csv
+│   └── multitask_metrics_20k.csv
+│
 ├── train.py
 ├── evaluate.py
 ├── evaluate_multitask.py
@@ -121,30 +157,70 @@ molecular-intelligence-lab/
 └── README.md
 ```
 
+---
+
+## Installation
+
+```bash
+git clone https://github.com/Bhvya11singh/molecular-intelligence-lab
+cd molecular-intelligence-lab
+
+python -m venv venv
+venv\Scripts\activate
+
+pip install -r requirements.txt
+```
+
+---
+
+## Training
+
+```bash
+python train.py
+```
+
+---
+
+## Evaluation
+
+Single-task evaluation:
+
+```bash
+python evaluate.py
+```
+
+Multi-task evaluation:
+
+```bash
+python evaluate_multitask.py
+```
+
+---
+
 ## Future Directions
 
-* Geometry-Aware Graph Neural Networks
-* Incorporation of 3D Molecular Coordinates
+* Geometry-Aware Molecular Neural Networks
+* Molecular 3D Coordinate Learning
+* SchNet-inspired Architectures
+* DimeNet-style Message Passing
+* Scientific Machine Learning
 * Physics-Informed Neural Networks
 * Molecular Representation Learning
-* Scientific Machine Learning for Chemical Systems
-* Neural Surrogates for Quantum Chemistry
-* Molecular Foundation Models
+* Drug Discovery Applications
+* Materials Informatics
 
 ---
 
 ## Author
 
-Bhavya Singh
+**Bhavya Singh**
 
-Fourth Year BS-MS Student
-Indian Institute of Science Education and Research (IISER) Mohali
+IISER Mohali
 
-Research Interests:
+Mathematics • Chemistry • Artificial Intelligence • Scientific Computing • Molecular Machine Learning
 
-* Scientific Machine Learning
-* Computational Chemistry
-* Graph Neural Networks
-* Molecular Artificial Intelligence
-* Mathematical Modeling
-* Scientific Computing
+---
+
+## Research Areas
+
+Computational Chemistry • Graph Neural Networks • Molecular AI • Scientific Machine Learning • Applied Mathematics • Quantum Chemistry
