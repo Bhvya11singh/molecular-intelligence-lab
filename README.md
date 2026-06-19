@@ -75,6 +75,30 @@ molecular-intelligence-lab/
 * Scientific Machine Learning
 * Molecular AI Applications
 
+## Installation
+
+```bash
+git clone https://github.com/Bhvya11singh/molecular-intelligence-lab
+cd molecular-intelligence-lab
+
+python -m venv venv
+venv\Scripts\activate
+
+pip install -r requirements.txt
+```
+
+## Training
+
+```bash
+python train.py
+```
+
+## Evaluation
+
+```bash
+python evaluate.py
+```
+
 ## Author
 
 **Bhavya Singh**
