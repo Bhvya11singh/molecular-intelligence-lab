@@ -1,11 +1,14 @@
 import torch
-import torch.nn.functional as F
 
 from torch_geometric.datasets import QM9
 from torch_geometric.loader import DataLoader
 
 from models.gcn import MolecularGCN
 
+
+# ==========================
+# LOAD DATASET
+# ==========================
 
 dataset = QM9(root="data/QM9")
 
@@ -17,15 +20,30 @@ loader = DataLoader(
     shuffle=False
 )
 
+
+# ==========================
+# LOAD MODEL
+# ==========================
+
 model = MolecularGCN()
 
 model.load_state_dict(
-    torch.load("models/molecular_gcn.pth")
+    torch.load(
+        "models/molecular_gcn_best.pth",
+        map_location=torch.device("cpu")
+    )
 )
 
 model.eval()
 
-total_mae = 0
+print("Model loaded successfully!")
+
+
+# ==========================
+# EVALUATION
+# ==========================
+
+total_mae = 0.0
 num_batches = 0
 
 with torch.no_grad():
@@ -47,6 +65,14 @@ with torch.no_grad():
         total_mae += mae.item()
         num_batches += 1
 
-print(
-    f"Average MAE = {total_mae / num_batches:.4f}"
-)
+
+# ==========================
+# RESULTS
+# ==========================
+
+final_mae = total_mae / num_batches
+
+print("\n==========================")
+print("Evaluation Results")
+print("==========================")
+print(f"Average MAE = {final_mae:.4f}")
