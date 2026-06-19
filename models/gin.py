@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 
-from torch.nn import Linear, Sequential, ReLU
+from torch.nn import Linear, Sequential, ReLU, Dropout
 from torch_geometric.nn import GINConv, global_mean_pool
 
 
@@ -27,7 +27,11 @@ class MolecularGIN(torch.nn.Module):
         self.conv2 = GINConv(nn2)
 
         self.fc1 = Linear(64, 32)
-        self.fc2 = Linear(32, 1)
+
+        # NEW
+        self.dropout = Dropout(0.2)
+
+        self.fc2 = Linear(32, 19)
 
     def forward(
         self,
@@ -58,6 +62,9 @@ class MolecularGIN(torch.nn.Module):
         x = F.relu(
             self.fc1(x)
         )
+
+        # NEW
+        x = self.dropout(x)
 
         x = self.fc2(x)
 

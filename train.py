@@ -15,7 +15,20 @@ from models.gin import MolecularGIN
 
 dataset = QM9(root="data/QM9")
 
-subset = dataset[:5000]
+subset = dataset[:20000]
+
+
+# ==========================
+# TARGET NORMALIZATION
+# ==========================
+
+all_targets = dataset.data.y
+
+target_mean = all_targets.mean(dim=0)
+target_std = all_targets.std(dim=0)
+
+print("Target Mean Shape:", target_mean.shape)
+print("Target Std Shape:", target_std.shape)
 
 
 # ==========================
@@ -24,7 +37,7 @@ subset = dataset[:5000]
 
 train_dataset, val_dataset = random_split(
     subset,
-    [4000, 1000],
+    [16000, 4000],
     generator=torch.Generator().manual_seed(42)
 )
 
@@ -63,7 +76,6 @@ optimizer = Adam(
 # ==========================
 
 best_val_loss = float("inf")
-best_train_loss = None
 
 
 # ==========================
@@ -90,7 +102,9 @@ for epoch in range(50):
             batch.batch
         )
 
-        target = batch.y[:, 0].view(-1, 1)
+        target = (
+            batch.y - target_mean
+        ) / target_std
 
         loss = F.mse_loss(
             pred,
@@ -102,6 +116,8 @@ for epoch in range(50):
         optimizer.step()
 
         train_loss += loss.item()
+
+    train_loss /= len(train_loader)
 
     # ------------------
     # VALIDATION
@@ -121,7 +137,9 @@ for epoch in range(50):
                 batch.batch
             )
 
-            target = batch.y[:, 0].view(-1, 1)
+            target = (
+                batch.y - target_mean
+            ) / target_std
 
             loss = F.mse_loss(
                 pred,
@@ -130,6 +148,8 @@ for epoch in range(50):
 
             val_loss += loss.item()
 
+    val_loss /= len(val_loader)
+
     # ------------------
     # SAVE BEST MODEL
     # ------------------
@@ -137,11 +157,10 @@ for epoch in range(50):
     if val_loss < best_val_loss:
 
         best_val_loss = val_loss
-        best_train_loss = train_loss
 
         torch.save(
             model.state_dict(),
-            "models/molecular_gcn_best.pth"
+            "models/molecular_gin_multitask_best.pth"
         )
 
         print("Best model updated!")
@@ -163,10 +182,19 @@ for epoch in range(50):
 
 torch.save(
     model.state_dict(),
-    "models/molecular_gcn.pth"
+    "models/molecular_gin_multitask.pth"
+)
+
+torch.save(
+    {
+        "mean": target_mean,
+        "std": target_std
+    },
+    "models/normalization_stats.pth"
 )
 
 print("\nTraining completed!")
 print(f"Best Validation Loss = {best_val_loss:.4f}")
 print("Final model saved!")
 print("Best model saved!")
+print("Normalization stats saved!")
