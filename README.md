@@ -4,22 +4,52 @@ Graph Neural Networks for Molecular Property Prediction using the QM9 Quantum Ch
 
 ## Overview
 
-This project explores molecular machine learning using Graph Neural Networks (GNNs). Molecules are represented as graphs, where:
+Molecular properties are fundamentally determined by atomic composition and chemical structure. This project explores how Graph Neural Networks (GNNs) can learn molecular representations directly from molecular graphs and predict quantum-chemical properties.
+
+In molecular graphs:
 
 * Nodes represent atoms
 * Edges represent chemical bonds
 
-A Graph Convolutional Network (GCN) is trained to predict molecular properties directly from graph structure.
+The goal is to predict molecular properties directly from graph structure without manually engineered features.
+
+---
 
 ## Dataset
 
-* QM9 Dataset
+### QM9 Quantum Chemistry Dataset
+
 * 130,000+ small organic molecules
 * Quantum chemical properties computed using Density Functional Theory (DFT)
+* Widely used benchmark dataset in molecular machine learning
 
-## Current Task
+Dataset source: QM9
 
-Predicting molecular dipole moment (μ) from molecular graphs.
+---
+
+## Objective
+
+Predict the molecular dipole moment (μ) using Graph Neural Networks.
+
+This serves as a foundational task in molecular machine learning and computational chemistry.
+
+---
+
+## Models Implemented
+
+### Graph Convolutional Network (GCN)
+
+* Graph convolution layers
+* Global mean pooling
+* Fully connected prediction head
+
+### Graph Isomorphism Network (GIN)
+
+* GINConv layers
+* Learnable aggregation functions
+* Improved expressive power for graph representation learning
+
+---
 
 ## Technologies
 
@@ -28,49 +58,75 @@ Predicting molecular dipole moment (μ) from molecular graphs.
 * PyTorch Geometric
 * Graph Neural Networks
 * Computational Chemistry
+* Scientific Machine Learning
 
-## Results
-
-| Model | Property      | MAE    |
-| ----- | ------------- | ------ |
-| GCN   | Dipole Moment | 1.0857 |
+---
 
 ## Experimental Results
 
-| Model | Dataset Size | Epochs | MAE |
-|---------|---------|---------|---------|
-| GCN | 5000 | 10 | 1.0857 |
-| GCN | 5000 | 50 | 0.9574 |
-| GIN | 5000 | 50 | 0.7952 |
+| Model | Dataset Size | Epochs | MAE    |
+| ----- | ------------ | ------ | ------ |
+| GCN   | 5000         | 10     | 1.0857 |
+| GCN   | 5000         | 50     | 0.9574 |
+| GIN   | 5000         | 50     | 0.7952 |
 
-### Observation
+### Key Observation
 
-GIN outperformed GCN on molecular property prediction, achieving a ~17% reduction in MAE under identical training conditions.
+Under identical training conditions, the Graph Isomorphism Network (GIN) achieved approximately **17% lower Mean Absolute Error (MAE)** than the Graph Convolutional Network (GCN), demonstrating improved molecular representation learning on the QM9 dataset.
+
+---
 
 ## Project Structure
 
 ```text
 molecular-intelligence-lab/
+│
 ├── data/
 ├── models/
+│   ├── gcn.py
+│   ├── gin.py
+│   └── *.pth
+│
 ├── notebooks/
+│
+├── results/
+│   └── results.csv
+│
 ├── train.py
 ├── evaluate.py
 ├── requirements.txt
 └── README.md
 ```
 
+---
+
 ## Future Work
 
-* GIN Networks
-* Multi-task Property Prediction
-* Molecular Embeddings
-* Scientific Machine Learning
-* Molecular AI Applications
+* Multi-property prediction across all QM9 targets
+* Message Passing Neural Networks (MPNN)
+* Molecular embeddings and representation learning
+* Physics-informed graph neural networks
+* Molecular generation and inverse design
+* Scientific Machine Learning for chemical systems
+
+---
+
+## Research Areas
+
+This project lies at the intersection of:
+
+* Computational Chemistry
+* Graph Theory
+* Machine Learning
+* Scientific Computing
+* Artificial Intelligence for Science
+
+---
 
 ## Author
 
-Bhavya Singh
+**Bhavya Singh**
 
 IISER Mohali
-Mathematics • Chemistry • AI/ML • Scientific Computing
+
+Mathematics • Chemistry • Machine Learning • Scientific Computing
