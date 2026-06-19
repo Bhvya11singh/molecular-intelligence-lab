@@ -1,0 +1,6 @@
+Model,DatasetSize,Targets,Metric,Value
+GCN,5000,1,MAE,1.0857
+GCN,5000,1,MAE,0.9574
+GIN,5000,1,MAE,0.7952
+MultiTaskGIN,5000,19,ValLoss,6.5868
+MultiTaskGIN-128x3,20000,19,ValLoss,0.3373

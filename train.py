@@ -1,5 +1,9 @@
+
+import os
 import torch
 import torch.nn.functional as F
+import pandas as pd
+import matplotlib.pyplot as plt
 
 from torch.optim import Adam
 from torch_geometric.datasets import QM9
@@ -7,6 +11,13 @@ from torch_geometric.loader import DataLoader
 from torch.utils.data import random_split
 
 from models.gin import MolecularGIN
+
+
+# ==========================
+# CREATE RESULTS FOLDER
+# ==========================
+
+os.makedirs("results", exist_ok=True)
 
 
 # ==========================
@@ -22,7 +33,7 @@ subset = dataset[:20000]
 # TARGET NORMALIZATION
 # ==========================
 
-all_targets = dataset.data.y
+all_targets = dataset.y
 
 target_mean = all_targets.mean(dim=0)
 target_std = all_targets.std(dim=0)
@@ -67,15 +78,19 @@ model = MolecularGIN()
 
 optimizer = Adam(
     model.parameters(),
-    lr=0.001
+    lr=0.001,
+    weight_decay=1e-5
 )
 
 
 # ==========================
-# TRACK BEST MODEL
+# TRACKING
 # ==========================
 
 best_val_loss = float("inf")
+
+train_losses = []
+val_losses = []
 
 
 # ==========================
@@ -90,7 +105,7 @@ for epoch in range(50):
 
     model.train()
 
-    train_loss = 0
+    train_loss = 0.0
 
     for batch in train_loader:
 
@@ -125,7 +140,7 @@ for epoch in range(50):
 
     model.eval()
 
-    val_loss = 0
+    val_loss = 0.0
 
     with torch.no_grad():
 
@@ -149,6 +164,9 @@ for epoch in range(50):
             val_loss += loss.item()
 
     val_loss /= len(val_loader)
+
+    train_losses.append(train_loss)
+    val_losses.append(val_loss)
 
     # ------------------
     # SAVE BEST MODEL
@@ -193,8 +211,59 @@ torch.save(
     "models/normalization_stats.pth"
 )
 
+
+# ==========================
+# SAVE TRAINING CURVE
+# ==========================
+
+plt.figure(figsize=(8, 5))
+
+plt.plot(
+    train_losses,
+    label="Train Loss"
+)
+
+plt.plot(
+    val_losses,
+    label="Validation Loss"
+)
+
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("Training Curve")
+
+plt.legend()
+
+plt.tight_layout()
+
+plt.savefig(
+    "results/training_curve.png"
+)
+
+plt.close()
+
+
+# ==========================
+# SAVE EXPERIMENT SUMMARY
+# ==========================
+
+summary = pd.DataFrame({
+    "Model": ["MultiTaskGIN"],
+    "Dataset_Size": [20000],
+    "Targets": [19],
+    "Best_Val_Loss": [best_val_loss]
+})
+
+summary.to_csv(
+    "results/experiment_summary.csv",
+    index=False
+)
+
 print("\nTraining completed!")
 print(f"Best Validation Loss = {best_val_loss:.4f}")
 print("Final model saved!")
 print("Best model saved!")
 print("Normalization stats saved!")
+print("Training curve saved!")
+print("Experiment summary saved!")
+
