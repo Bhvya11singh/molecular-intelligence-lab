@@ -96,8 +96,26 @@ Scientific Machine Learning and geometry-aware molecular neural networks using m
 | Multi-Task GIN                              | 5,000        | 19 Properties | Validation Loss = 6.5868 |
 | Multi-Task GIN (3 Layers, 128 Hidden Units) | 20,000       | 19 Properties | Validation Loss ≈ 0.34   |
 
-### Property-wise Results (20,000 Molecules)
+## Advanced Multi-Task Molecular Prediction
 
+Implemented an enhanced Residual Graph Isomorphism Network (GIN) featuring:
+
+- 3 GIN layers
+- Batch Normalization
+- Residual Connections
+- Dropout Regularization
+- Adaptive Learning Rate Scheduling
+
+The model was trained on 20,000 QM9 molecules to jointly predict 19 quantum chemical properties.
+
+### Best Result
+
+| Model | Dataset Size | Targets | Best Validation Loss |
+|--------|-------------|---------|---------------------|
+| Residual Multi-Task GIN | 20,000 | 19 | 0.2424 |
+
+ 
+### Property-wise Results (20,000 Molecules) 
 | Property  | MAE     |
 | --------- | ------- |
 | mu        | 0.906   |
