@@ -64,10 +64,10 @@ with torch.no_grad():
     for batch in loader:
 
         pred = model(
-            batch.x,
-            batch.edge_index,
-            batch.batch
-        )
+           batch.z,
+           batch.pos,
+           batch.batch
+         )
 
         # Convert predictions back
         # to original QM9 scale

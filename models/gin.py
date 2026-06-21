@@ -1,8 +1,18 @@
 import torch
 import torch.nn.functional as F
 
-from torch.nn import Linear, Sequential, ReLU, Dropout
-from torch_geometric.nn import GINConv, global_mean_pool
+from torch.nn import (
+    Linear,
+    Sequential,
+    ReLU,
+    BatchNorm1d,
+    Dropout
+)
+
+from torch_geometric.nn import (
+    GINConv,
+    global_mean_pool
+)
 
 
 class MolecularGIN(torch.nn.Module):
@@ -11,27 +21,59 @@ class MolecularGIN(torch.nn.Module):
 
         super().__init__()
 
-        nn1 = Sequential(
-            Linear(11, 64),
-            ReLU(),
-            Linear(64, 64)
-        )
+        hidden_dim = 128
 
-        nn2 = Sequential(
-            Linear(64, 64),
+        # ==========================
+        # GIN BLOCK 1
+        # ==========================
+
+        nn1 = Sequential(
+            Linear(11, hidden_dim),
             ReLU(),
-            Linear(64, 64)
+            Linear(hidden_dim, hidden_dim)
         )
 
         self.conv1 = GINConv(nn1)
+        self.bn1 = BatchNorm1d(hidden_dim)
+
+        # ==========================
+        # GIN BLOCK 2
+        # ==========================
+
+        nn2 = Sequential(
+            Linear(hidden_dim, hidden_dim),
+            ReLU(),
+            Linear(hidden_dim, hidden_dim)
+        )
+
         self.conv2 = GINConv(nn2)
+        self.bn2 = BatchNorm1d(hidden_dim)
 
-        self.fc1 = Linear(64, 32)
+        # ==========================
+        # GIN BLOCK 3
+        # ==========================
 
-        # NEW
-        self.dropout = Dropout(0.2)
+        nn3 = Sequential(
+            Linear(hidden_dim, hidden_dim),
+            ReLU(),
+            Linear(hidden_dim, hidden_dim)
+        )
 
-        self.fc2 = Linear(32, 19)
+        self.conv3 = GINConv(nn3)
+        self.bn3 = BatchNorm1d(hidden_dim)
+
+        # ==========================
+        # DROPOUT
+        # ==========================
+
+        self.dropout = Dropout(p=0.3)
+
+        # ==========================
+        # MLP HEAD
+        # ==========================
+
+        self.fc1 = Linear(hidden_dim, 64)
+        self.fc2 = Linear(64, 19)
 
     def forward(
         self,
@@ -40,30 +82,54 @@ class MolecularGIN(torch.nn.Module):
         batch
     ):
 
-        x = self.conv1(
-            x,
-            edge_index
-        )
+        # ==========================
+        # LAYER 1
+        # ==========================
 
-        x = F.relu(x)
+        x1 = self.conv1(x, edge_index)
+        x1 = self.bn1(x1)
+        x1 = F.relu(x1)
 
-        x = self.conv2(
-            x,
-            edge_index
-        )
+        # ==========================
+        # LAYER 2 + RESIDUAL
+        # ==========================
 
-        x = F.relu(x)
+        x2 = self.conv2(x1, edge_index)
+        x2 = self.bn2(x2)
+
+        # Residual connection
+        x2 = x2 + x1
+
+        x2 = F.relu(x2)
+
+        # ==========================
+        # LAYER 3 + RESIDUAL
+        # ==========================
+
+        x3 = self.conv3(x2, edge_index)
+        x3 = self.bn3(x3)
+
+        # Residual connection
+        x3 = x3 + x2
+
+        x3 = F.relu(x3)
+
+        # ==========================
+        # GLOBAL POOLING
+        # ==========================
 
         x = global_mean_pool(
-            x,
+            x3,
             batch
         )
 
-        x = F.relu(
-            self.fc1(x)
-        )
+        # ==========================
+        # MLP HEAD
+        # ==========================
 
-        # NEW
+        x = self.fc1(x)
+        x = F.relu(x)
+
         x = self.dropout(x)
 
         x = self.fc2(x)

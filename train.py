@@ -1,4 +1,3 @@
-
 import os
 import torch
 import torch.nn.functional as F
@@ -6,6 +5,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from torch.optim import Adam
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+
 from torch_geometric.datasets import QM9
 from torch_geometric.loader import DataLoader
 from torch.utils.data import random_split
@@ -80,6 +81,13 @@ optimizer = Adam(
     model.parameters(),
     lr=0.001,
     weight_decay=1e-5
+)
+
+scheduler = ReduceLROnPlateau(
+    optimizer,
+    mode="min",
+    factor=0.5,
+    patience=5
 )
 
 
@@ -165,6 +173,11 @@ for epoch in range(50):
 
     val_loss /= len(val_loader)
 
+    # Learning-rate scheduler
+    scheduler.step(val_loss)
+
+    current_lr = optimizer.param_groups[0]["lr"]
+
     train_losses.append(train_loss)
     val_losses.append(val_loss)
 
@@ -178,7 +191,7 @@ for epoch in range(50):
 
         torch.save(
             model.state_dict(),
-            "models/molecular_gin_multitask_best.pth"
+            "models/molecular_gin_residual_best.pth"
         )
 
         print("Best model updated!")
@@ -190,7 +203,8 @@ for epoch in range(50):
     print(
         f"Epoch {epoch+1:02d} | "
         f"Train Loss = {train_loss:.4f} | "
-        f"Val Loss = {val_loss:.4f}"
+        f"Val Loss = {val_loss:.4f} | "
+        f"LR = {current_lr:.6f}"
     )
 
 
@@ -200,7 +214,7 @@ for epoch in range(50):
 
 torch.save(
     model.state_dict(),
-    "models/molecular_gin_multitask.pth"
+    "models/molecular_gin_residual.pth"
 )
 
 torch.save(
@@ -230,7 +244,7 @@ plt.plot(
 
 plt.xlabel("Epoch")
 plt.ylabel("Loss")
-plt.title("Training Curve")
+plt.title("Residual GIN Training Curve")
 
 plt.legend()
 
@@ -248,7 +262,7 @@ plt.close()
 # ==========================
 
 summary = pd.DataFrame({
-    "Model": ["MultiTaskGIN"],
+    "Model": ["ResidualGIN"],
     "Dataset_Size": [20000],
     "Targets": [19],
     "Best_Val_Loss": [best_val_loss]
@@ -266,4 +280,3 @@ print("Best model saved!")
 print("Normalization stats saved!")
 print("Training curve saved!")
 print("Experiment summary saved!")
-
