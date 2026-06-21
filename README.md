@@ -143,25 +143,25 @@ The model was trained on 20,000 QM9 molecules to jointly predict 19 quantum chem
 ### 3D Molecular Structure
 
 <p align="center">
-  <img src="assets/ethanol.png" width="400">
+  <img src="results/ethanol.png" width="400">
 </p>
 
 ### Molecules as Graphs
 
 <p align="center">
-  <img src="assets/molecular_graph.png" width="400">
+  <img src="results/molecular_graph.png" width="400">
 </p>
 
 ### Residual Multi-Task GIN Architecture
 
 <p align="center">
-  <img src="assets/architecture_diagram.png" width="500">
+  <img src="results/architecture_diagram.png" width="500">
 </p>
 
 ### Training Dynamics
 
 <p align="center">
-  <img src="assets/training_curve.png" width="500">
+  <img src="results/training_curve.png" width="500">
 </p>
 
 ## Key Findings
